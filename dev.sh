@@ -8,6 +8,9 @@ elif [ $1 == "install" ]; then
         glide install
     popd
 elif [ $1 == "run-server" ]; then
+    export PGHOST=/var/run/postgresql
+    export PGENV=development
+    export PGUSER=postgres
     ./bin/share-my-notes
 else
     echo "Unrecognized command"

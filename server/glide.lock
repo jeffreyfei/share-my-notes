@@ -1,8 +1,29 @@
-hash: c2454677369269b4cfd56cad38f77d69ae10c6db195f2b6513e1e319fa5221f4
-updated: 2017-11-12T22:04:41.039599638-05:00
+hash: de29acbe4efeb66d142a5a1110daee985da4eff2c7f1cd07123da2c24fade968
+updated: 2017-11-16T02:09:58.810813961-05:00
 imports:
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: 3f19343c7d9ce75569b952758bd236af94956061
+- name: github.com/gorilla/sessions
+  version: ca9ada44574153444b00d3fd9c8559e4cc95f896
 - name: github.com/gorilla/websocket
   version: ea4d1f681babbce9545c9c5f3d5194a789c89f5b
 - name: github.com/jinzhu/gorm
   version: 5174cc5c242a728b435ea2be8a2f7f998e15429b
+  subpackages:
+  - dialects/postgres
+- name: github.com/jinzhu/inflection
+  version: 1c35d901db3da928c72a72d8458480cc9ade058f
+- name: github.com/lib/pq
+  version: 8c6ee72f3e6bcb1542298dd5f76cb74af9742cec
+  subpackages:
+  - hstore
+  - oid
+- name: github.com/sirupsen/logrus
+  version: f006c2ac4710855cf0f916dd6b77acf6b048dc6e
+- name: github.com/Sirupsen/logrus
+  version: 89742aefa4b206dcf400792f3bd35b542998eb3b
+  repo: git@github.com:/sirupsen/logrus
+  vcs: git
 testImports: []
