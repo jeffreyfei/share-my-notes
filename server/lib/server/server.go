@@ -5,12 +5,12 @@ import "github.com/gorilla/mux"
 
 type Server struct {
 	db     *gorm.DB
-	router *mux.Router
+	Router *mux.Router
 }
 
-func NewServer(db *gorm.DB, router *muxRouter) *Server {
+func NewServer(db *gorm.DB) *Server {
 	server := Server{}
 	server.db = db
-	server.router = BuildRouter()
+	server.Router = BuildRouter()
 	return &server
 }

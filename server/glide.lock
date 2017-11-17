@@ -1,5 +1,5 @@
-hash: de29acbe4efeb66d142a5a1110daee985da4eff2c7f1cd07123da2c24fade968
-updated: 2017-11-16T02:09:58.810813961-05:00
+hash: 6d2e1f6420c69611353364a570d044e2676a286d7fbb6abd020eae5f05a3377e
+updated: 2017-11-16T22:14:03.707888866-05:00
 imports:
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
@@ -26,4 +26,13 @@ imports:
   version: 89742aefa4b206dcf400792f3bd35b542998eb3b
   repo: git@github.com:/sirupsen/logrus
   vcs: git
+- name: golang.org/x/crypto
+  version: 9f005a07e0d31d45e6656d241bb5c0f2efd4bc94
+  subpackages:
+  - ssh/terminal
+- name: golang.org/x/sys
+  version: bf42f188b9bc6f2cf5b8ee5a912ef1aedd0eba4c
+  subpackages:
+  - unix
+  - windows
 testImports: []

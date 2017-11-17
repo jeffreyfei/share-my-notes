@@ -14,7 +14,6 @@ func InitDB() (*gorm.DB, error) {
 		os.Getenv("PGUSER"),
 		os.Getenv("PGENV"),
 		os.Getenv("PGPASS"))
-	fmt.Println(config)
 	db, err := gorm.Open("postgres", config)
 	if err != nil {
 		return nil, err

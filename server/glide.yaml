@@ -12,3 +12,5 @@ import:
   repo: git@github.com:/sirupsen/logrus
   vcs: git
 - package: github.com/gorilla/mux
+- package: golang.org/x/sys/unix
+- package: golang.org/x/crypto/ssh/terminal

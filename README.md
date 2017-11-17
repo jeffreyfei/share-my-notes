@@ -21,9 +21,10 @@ service postgresql initdb
 chkconfig postgresql on
 ```
 3. Setup local connecction to Postgres in http://suite.boundlessgeo.com/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
+- Change peer to trust in your dev enviroment
 ### Get dependencies
 ```
-bash dev.sh install
+bash dev.sh up
 ```
 ### Build server
 ```

@@ -6,21 +6,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Route struct {
+type route struct {
 	Type    string
 	Route   string
-	Handler http.Handler
+	Handler http.HandlerFunc
 }
 
-type Routes []Route
+type routes []route
 
-func buildRoutes() {
-	return Routes{}
+func buildRoutes() routes {
+	return routes{}
 }
 
-func BuildRouter() {
-	router = mux.NewRouter().StrictSlash(true)
+func BuildRouter() *mux.Router {
+	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range buildRoutes() {
 		router.HandleFunc(route.Route, route.Handler).Methods(route.Type)
 	}
+	return router
 }
