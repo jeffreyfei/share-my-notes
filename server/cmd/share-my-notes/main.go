@@ -27,7 +27,8 @@ func initServer() {
 	clientID := os.Getenv("GOOGLEKEY")
 	clientSecret := os.Getenv("GOOGLESECRET")
 	baseURL := os.Getenv("BASE_URL")
-	webServer = server.NewServer(db, baseURL, clientID, clientSecret)
+	sessionKey := os.Getenv("SESSION_KEY")
+	webServer = server.NewServer(db, baseURL, sessionKey, clientID, clientSecret)
 }
 
 func main() {

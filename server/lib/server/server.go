@@ -18,18 +18,24 @@ type Server struct {
 	sessionStore *sessions.CookieStore
 }
 
-func NewServer(db *gorm.DB, baseURL, clientID, clientSecret string) *Server {
+func NewServer(db *gorm.DB, baseURL, sessionKey, clientID, clientSecret string) *Server {
 	server := Server{}
 	server.db = db
-	server.Router = buildRouter()
+	server.Router = server.buildRouter()
 	server.baseURL = baseURL
-	server.oauth2Config = server.getOauthConfig(clientID, clientSecret)
+	server.oauth2Config = getOauthConfig(baseURL, clientID, clientSecret)
+	server.sessionStore = getSessionStore(sessionKey)
 	return &server
 }
 
-func (s *Server) getOauthConfig(clientID, clientSecret string) *oauth2.Config {
+func getSessionStore(sessionKey string) *sessions.CookieStore {
+	cookieStore := sessions.NewCookieStore([]byte(sessionKey))
+	return cookieStore
+}
+
+func getOauthConfig(baseURL, clientID, clientSecret string) *oauth2.Config {
 	return &oauth2.Config{
-		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", s.baseURL),
+		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", baseURL),
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
 		Scopes:       []string{"email", "profile"},

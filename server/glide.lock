@@ -1,5 +1,5 @@
-hash: f91dfc29be3eb160e4a8dfd87f42ee4a22f8f9b9fe7f120ec20e9a46f48a5386
-updated: 2017-11-26T03:11:15.261079194-05:00
+hash: 0da047098570973dc30a3dcf43cdd92c1187c40cd7266bb8832e3b596602f783
+updated: 2017-11-26T03:46:11.35428439-05:00
 imports:
 - name: cloud.google.com/go
   version: 290422ce3a4bcdb0c7998c2a994e23bc950b0bdb
@@ -12,9 +12,9 @@ imports:
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
-  version: 3f19343c7d9ce75569b952758bd236af94956061
+  version: 7f08801859139f86dfafd1c296e2cba9a80d292e
 - name: github.com/gorilla/securecookie
-  version: e59506cc896acb7f7bf732d4fdf5e25f7ccd8983
+  version: 667fe4e3466a040b780561fe9b51a83a3753eefc
 - name: github.com/gorilla/sessions
   version: ca9ada44574153444b00d3fd9c8559e4cc95f896
 - name: github.com/gorilla/websocket
@@ -30,6 +30,8 @@ imports:
   subpackages:
   - hstore
   - oid
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/sirupsen/logrus
   version: f006c2ac4710855cf0f916dd6b77acf6b048dc6e
 - name: github.com/Sirupsen/logrus
