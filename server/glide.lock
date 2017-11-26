@@ -1,10 +1,20 @@
-hash: 6d2e1f6420c69611353364a570d044e2676a286d7fbb6abd020eae5f05a3377e
-updated: 2017-11-16T22:14:03.707888866-05:00
+hash: f91dfc29be3eb160e4a8dfd87f42ee4a22f8f9b9fe7f120ec20e9a46f48a5386
+updated: 2017-11-26T03:11:15.261079194-05:00
 imports:
+- name: cloud.google.com/go
+  version: 290422ce3a4bcdb0c7998c2a994e23bc950b0bdb
+  subpackages:
+  - compute/metadata
+- name: github.com/golang/protobuf
+  version: 1e59b77b52bf8e4b449a57e6f79f21226d571845
+  subpackages:
+  - proto
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
   version: 3f19343c7d9ce75569b952758bd236af94956061
+- name: github.com/gorilla/securecookie
+  version: e59506cc896acb7f7bf732d4fdf5e25f7ccd8983
 - name: github.com/gorilla/sessions
   version: ca9ada44574153444b00d3fd9c8559e4cc95f896
 - name: github.com/gorilla/websocket
@@ -27,12 +37,40 @@ imports:
   repo: git@github.com:/sirupsen/logrus
   vcs: git
 - name: golang.org/x/crypto
-  version: 9f005a07e0d31d45e6656d241bb5c0f2efd4bc94
+  version: b080dc9a8c480b08e698fb1219160d598526310f
   subpackages:
   - ssh/terminal
+- name: golang.org/x/net
+  version: c7086645de248775cbf2373cf5ca4d2fa664b8c1
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/oauth2
+  version: f95fa95eaa936d9d87489b15d1d18b97c1ba9c28
+  subpackages:
+  - google
+  - internal
+  - jws
+  - jwt
 - name: golang.org/x/sys
-  version: bf42f188b9bc6f2cf5b8ee5a912ef1aedd0eba4c
+  version: 4ff8c001ce4cc464e644b922325097228fce14d8
   subpackages:
   - unix
   - windows
+- name: google.golang.org/appengine
+  version: 9d8544a6b2c7df9cff240fcf92d7b2f59bc13416
+  subpackages:
+  - internal
+  - internal/app_identity
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/modules
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
+- name: google.golang.org/cloud
+  version: 290422ce3a4bcdb0c7998c2a994e23bc950b0bdb
+  subpackages:
+  - compute/metadata
 testImports: []

@@ -12,5 +12,11 @@ import:
   repo: git@github.com:/sirupsen/logrus
   vcs: git
 - package: github.com/gorilla/mux
+- package: github.com/gorilla/securecookie
 - package: golang.org/x/sys/unix
 - package: golang.org/x/crypto/ssh/terminal
+- package: golang.org/x/oauth2
+- package: golang.org/x/oauth2/google
+- package: golang.org/x/oauth2/jwt
+- package: golang.org/x/net/context
+- package: google.golang.org/cloud/compute/metadata

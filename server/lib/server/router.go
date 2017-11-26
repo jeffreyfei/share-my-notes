@@ -18,7 +18,7 @@ func buildRoutes() routes {
 	return routes{}
 }
 
-func BuildRouter() *mux.Router {
+func buildRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range buildRoutes() {
 		router.HandleFunc(route.Route, route.Handler).Methods(route.Type)
