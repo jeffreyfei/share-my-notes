@@ -18,13 +18,18 @@ func buildRoutes(s *Server) routes {
 	return routes{
 		route{
 			"GET",
-			"/auth/google",
+			"/auth/google/login",
 			s.googleLoginHandler,
 		},
 		route{
 			"GET",
 			"/auth/google/callback",
 			s.googleLoginCallbackHandler,
+		},
+		route{
+			"GET",
+			"/auth/google/logout",
+			s.googleLogoutHandler,
 		},
 	}
 }

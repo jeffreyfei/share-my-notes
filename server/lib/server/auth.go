@@ -53,6 +53,22 @@ func (s *Server) fetchGooglePlusProfile(ctx context.Context, token *oauth2.Token
 	return plusService.People.Get("me").Do()
 }
 
+func (s *Server) getProfileFromSession(r *http.Request) *Profile {
+	session, err := s.sessionStore.Get(r, defaultSessionID)
+	if err != nil {
+		return nil
+	}
+	token, ok := session.Values[oauthSessionKey].(oauth2.Token)
+	if !ok || !token.Valid() {
+		return nil
+	}
+	profile, ok := session.Values[googleProfileSessionKey].(Profile)
+	if !ok {
+		return nil
+	}
+	return &profile
+}
+
 func formatProfile(profile *plus.Person) *Profile {
 	return &Profile{
 		ID:          profile.Id,
@@ -99,6 +115,9 @@ func (s *Server) googleLoginCallbackHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	session, err := s.sessionStore.New(r, defaultSessionID)
+	if err != nil {
+		log.WithField("err", err).Error("Could not get default session")
+	}
 	ctx := context.Background()
 	profile, err := s.fetchGooglePlusProfile(ctx, token)
 	if err != nil {
@@ -110,6 +129,24 @@ func (s *Server) googleLoginCallbackHandler(w http.ResponseWriter, r *http.Reque
 	if err := session.Save(r, w); err != nil {
 		log.WithField("err", err).Error("Could not save session")
 		return
+	}
+	http.Redirect(w, r, redirectURL, http.StatusFound)
+}
+
+func (s *Server) googleLogoutHandler(w http.ResponseWriter, r *http.Request) {
+	session, err := s.sessionStore.New(r, defaultSessionID)
+	if err != nil {
+		log.WithField("err", err).Error("Could not get default session")
+		return
+	}
+	session.Options.MaxAge = -1
+	if err := session.Save(r, w); err != nil {
+		log.WithField("err", err).Error("Could not save session")
+		return
+	}
+	redirectURL, err := validateRedirectURL(r.FormValue(redirectKey))
+	if err != nil {
+		log.WithField("err", err).Error("Invalid URL")
 	}
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
