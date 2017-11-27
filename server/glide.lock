@@ -1,5 +1,5 @@
-hash: 0da047098570973dc30a3dcf43cdd92c1187c40cd7266bb8832e3b596602f783
-updated: 2017-11-26T03:46:11.35428439-05:00
+hash: 8e72d545315732a1cc9a40f1bf74e366ba90861d7dc5cd75ad321bfc88a47465
+updated: 2017-11-26T19:01:45.286896873-05:00
 imports:
 - name: cloud.google.com/go
   version: 290422ce3a4bcdb0c7998c2a994e23bc950b0bdb
@@ -59,6 +59,13 @@ imports:
   subpackages:
   - unix
   - windows
+- name: google.golang.org/api
+  version: b804618854e387dc7fdd9e50496183ddcbb4b120
+  subpackages:
+  - gensupport
+  - googleapi
+  - googleapi/internal/uritemplates
+  - plus/v1
 - name: google.golang.org/appengine
   version: 9d8544a6b2c7df9cff240fcf92d7b2f59bc13416
   subpackages:

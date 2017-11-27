@@ -13,6 +13,7 @@ elif [ $1 == "run-server" ]; then
     export PGUSER=postgres
     export SERVER_PORT=8080
     export BASE_URL=http://localhost:8080
+    export SESSION_KEY=dev_session_key
     ./bin/share-my-notes
 else
     echo "Unrecognized command"

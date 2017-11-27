@@ -17,13 +17,13 @@ type routes []route
 func buildRoutes(s *Server) routes {
 	return routes{
 		route{
-			"google-login",
-			"auth/google",
+			"GET",
+			"/auth/google",
 			s.googleLoginHandler,
 		},
 		route{
-			"google-login-callback",
-			"auth/google/callback",
+			"GET",
+			"/auth/google/callback",
 			s.googleLoginCallbackHandler,
 		},
 	}

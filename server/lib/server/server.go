@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/gob"
 	"fmt"
 
 	"github.com/gorilla/mux"
@@ -25,6 +26,8 @@ func NewServer(db *gorm.DB, baseURL, sessionKey, clientID, clientSecret string) 
 	server.baseURL = baseURL
 	server.oauth2Config = getOauthConfig(baseURL, clientID, clientSecret)
 	server.sessionStore = getSessionStore(sessionKey)
+	gob.Register(Profile{})
+	gob.Register(oauth2.Token{})
 	return &server
 }
 
