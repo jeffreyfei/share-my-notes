@@ -9,6 +9,12 @@
 
 1. Install Glide
 
+1. Setup Google credentials in your Google Account
+```
+export GOOGLEKEY=<Your google client ID>
+export GOOGLESECRET=<Your google client secret>
+```
+
 ### Setup Postgres
 1. Follow instructions on https://www.postgresql.org/ to install Postgresql 10 on your system
 1. Initialize Postgres
