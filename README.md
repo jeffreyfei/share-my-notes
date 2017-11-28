@@ -28,6 +28,9 @@ chkconfig postgresql on
 ```
 3. Setup local connecction to Postgres in http://suite.boundlessgeo.com/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 - Change peer to trust in your dev enviroment
+
+
+4. Create database `"development"` and `"testing"`
 ### Get dependencies
 ```
 bash dev.sh up
@@ -39,4 +42,8 @@ bash dev.sh build
 ### Run server
 ```
 bash dev.sh run-server
+```
+### Run tests
+```
+bash dev.sh test
 ```
