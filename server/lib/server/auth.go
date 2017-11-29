@@ -8,6 +8,7 @@ import (
 
 	"golang.org/x/oauth2"
 
+	"github.com/jeffreyfei/share-my-notes/server/lib/user"
 	"github.com/satori/go.uuid"
 	"google.golang.org/api/plus/v1"
 
@@ -22,12 +23,6 @@ const (
 	googleProfileSessionKey = "google_profile"
 	oauthSessionKey         = "oauth_token"
 )
-
-type Profile struct {
-	ID,
-	DisplayName,
-	ImageURL string
-}
 
 func validateRedirectURL(path string) (string, error) {
 	if path == "" {
@@ -53,7 +48,7 @@ func (s *Server) fetchGooglePlusProfile(ctx context.Context, token *oauth2.Token
 	return plusService.People.Get("me").Do()
 }
 
-func (s *Server) getProfileFromSession(r *http.Request) *Profile {
+func (s *Server) getProfileFromSession(r *http.Request) *user.UserModel {
 	session, err := s.sessionStore.Get(r, defaultSessionID)
 	if err != nil {
 		return nil
@@ -62,19 +57,19 @@ func (s *Server) getProfileFromSession(r *http.Request) *Profile {
 	if !ok || !token.Valid() {
 		return nil
 	}
-	profile, ok := session.Values[googleProfileSessionKey].(Profile)
+	profile, ok := session.Values[googleProfileSessionKey].(user.UserModel)
 	if !ok {
 		return nil
 	}
 	return &profile
 }
 
-func formatProfile(profile *plus.Person) *Profile {
-	return &Profile{
-		ID:          profile.Id,
-		DisplayName: profile.DisplayName,
-		ImageURL:    profile.Image.Url,
-	}
+func formatProfile(profile *plus.Person) *user.UserModel {
+	var user user.UserModel
+	user.GoogleID = profile.Id
+	user.Name = profile.DisplayName
+	user.ImageURL = profile.Image.Url
+	return &user
 }
 
 func (s *Server) googleLoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -119,13 +114,19 @@ func (s *Server) googleLoginCallbackHandler(w http.ResponseWriter, r *http.Reque
 		log.WithField("err", err).Error("Could not get default session")
 	}
 	ctx := context.Background()
-	profile, err := s.fetchGooglePlusProfile(ctx, token)
+	plusProfile, err := s.fetchGooglePlusProfile(ctx, token)
 	if err != nil {
 		log.WithField("err", err).Error("Could not get Google profile")
 		return
 	}
+	profile := formatProfile(plusProfile)
+	if savedProfile, err := user.HandleLogin(s.db, profile); err != nil {
+		log.WithField("err", err).Error("Could not login")
+		return
+	} else {
+		session.Values[googleProfileSessionKey] = savedProfile
+	}
 	session.Values[oauthSessionKey] = token
-	session.Values[googleProfileSessionKey] = formatProfile(profile)
 	if err := session.Save(r, w); err != nil {
 		log.WithField("err", err).Error("Could not save session")
 		return

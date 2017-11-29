@@ -3,7 +3,6 @@ package user
 import (
 	"time"
 
-	"github.com/jeffreyfei/share-my-notes/server/lib/server"
 	"github.com/jinzhu/gorm"
 )
 
@@ -20,23 +19,27 @@ func AutoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(&UserModel{}).Error
 }
 
-func Exists(db *gorm.DB, profile *server.Profile) (bool, error) {
-	var user UserModel
-	if err := db.Where("google_id = ?", profile.ID).First(&user).Error; err != nil {
+func HandleLogin(db *gorm.DB, user *UserModel) (*UserModel, error) {
+	var existingUser UserModel
+	if err := db.Where("google_id = ?", user.GoogleID).First(&existingUser).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return false, nil
+			return user, NewUser(db, user)
 		}
-		return false, err
+		return nil, err
 	}
-	return true, nil
+	if err := existingUser.UpdateLoginTime(db); err != nil {
+		return nil, err
+	}
+	return &existingUser, nil
 }
 
-func NewUser(db *gorm.DB, profile *server.Profile) error {
-	newUser := UserModel{}
-	newUser.GoogleID = profile.ID
-	newUser.Name = profile.DisplayName
-	newUser.ImageURL = profile.ImageURL
-	newUser.CreatedAt = time.Now()
-	newUser.LastLoggedInAt = time.Now()
-	return db.Save(&newUser).Error
+func NewUser(db *gorm.DB, user *UserModel) error {
+	user.CreatedAt = time.Now()
+	user.LastLoggedInAt = time.Now()
+	return db.Save(user).Error
+}
+
+func (u *UserModel) UpdateLoginTime(db *gorm.DB) error {
+	u.LastLoggedInAt = time.Now()
+	return db.Save(u).Error
 }

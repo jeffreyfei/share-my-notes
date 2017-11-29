@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"github.com/jeffreyfei/share-my-notes/server/lib/user"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -26,7 +27,7 @@ func NewServer(db *gorm.DB, baseURL, sessionKey, clientID, clientSecret string) 
 	server.baseURL = baseURL
 	server.oauth2Config = getOauthConfig(baseURL, clientID, clientSecret)
 	server.sessionStore = getSessionStore(sessionKey)
-	gob.Register(Profile{})
+	gob.Register(user.UserModel{})
 	gob.Register(oauth2.Token{})
 	return &server
 }
