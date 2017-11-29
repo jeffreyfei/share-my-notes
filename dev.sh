@@ -15,6 +15,13 @@ elif [ $1 == "run-server" ]; then
     export BASE_URL=http://localhost:8080
     export SESSION_KEY=dev_session_key
     ./bin/share-my-notes
+elif [ $1 == "test" ]; then
+    export PGHOST=/var/run/postgresql
+    export PGENV=testing
+    export PGUSER=postgres
+    pushd server
+        go test ./...
+    popd
 else
     echo "Unrecognized command"
 fi

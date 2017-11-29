@@ -7,6 +7,7 @@ import (
 
 	dbLib "github.com/jeffreyfei/share-my-notes/server/lib/db"
 	"github.com/jeffreyfei/share-my-notes/server/lib/server"
+	"github.com/jeffreyfei/share-my-notes/server/lib/user"
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 )
@@ -18,8 +19,12 @@ var (
 
 func initDB() {
 	var err error
-	if db, err = dbLib.InitDB(); err != nil {
+	if db, err = dbLib.GetDB(); err != nil {
 		log.Fatal(err)
+	}
+	if err := user.AutoMigrate(db); err != nil {
+		log.WithField("err", err).Error("Failed to migrate user model")
+		os.Exit(1)
 	}
 }
 

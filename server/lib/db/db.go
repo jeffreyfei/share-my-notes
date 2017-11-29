@@ -8,7 +8,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-func InitDB() (*gorm.DB, error) {
+func GetDB() (*gorm.DB, error) {
 	config := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s",
 		os.Getenv("PGHOST"),
 		os.Getenv("PGUSER"),
