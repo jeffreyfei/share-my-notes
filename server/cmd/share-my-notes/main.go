@@ -6,6 +6,7 @@ import (
 	"os"
 
 	dbLib "github.com/jeffreyfei/share-my-notes/server/lib/db"
+	"github.com/jeffreyfei/share-my-notes/server/lib/md_note"
 	"github.com/jeffreyfei/share-my-notes/server/lib/server"
 	"github.com/jeffreyfei/share-my-notes/server/lib/user"
 	"github.com/jinzhu/gorm"
@@ -24,6 +25,10 @@ func initDB() {
 	}
 	if err := user.AutoMigrate(db); err != nil {
 		log.WithField("err", err).Error("Failed to migrate user model")
+		os.Exit(1)
+	}
+	if err := md_note.AutoMigrate(db); err != nil {
+		log.WithField("err", err).Error("Failed to migrate md note model")
 		os.Exit(1)
 	}
 }
