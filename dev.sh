@@ -20,7 +20,7 @@ elif [ $1 == "test" ]; then
     export PGENV=testing
     export PGUSER=postgres
     pushd server
-        go test ./...
+        go test -p 1 ./...
     popd
 else
     echo "Unrecognized command"

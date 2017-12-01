@@ -41,3 +41,8 @@ import:
   subpackages:
   - assert
   - suite
+- package: github.com/microcosm-cc/bluemonday
+- package: github.com/shurcooL/github_flavored_markdown
+- package: github.com/russross/blackfriday
+  version: ^1.4.0
+- package: github.com/shurcooL/highlight_diff

@@ -3,6 +3,8 @@ package user
 import (
 	"time"
 
+	"github.com/jeffreyfei/share-my-notes/server/lib/md_note"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -27,7 +29,7 @@ func HandleLogin(db *gorm.DB, user *UserModel) (*UserModel, error) {
 		}
 		return nil, err
 	}
-	if err := existingUser.UpdateLoginTime(db); err != nil {
+	if err := existingUser.updateLoginTime(db); err != nil {
 		return nil, err
 	}
 	return &existingUser, nil
@@ -36,10 +38,18 @@ func HandleLogin(db *gorm.DB, user *UserModel) (*UserModel, error) {
 func NewUser(db *gorm.DB, user *UserModel) error {
 	user.CreatedAt = time.Now()
 	user.LastLoggedInAt = time.Now()
-	return db.Save(user).Error
+	return db.Create(user).Error
 }
 
-func (u *UserModel) UpdateLoginTime(db *gorm.DB) error {
+func (u *UserModel) updateLoginTime(db *gorm.DB) error {
 	u.LastLoggedInAt = time.Now()
 	return db.Save(u).Error
+}
+
+func (u *UserModel) MDNotes(db *gorm.DB) ([]md_note.MDNoteModel, error) {
+	var mdNotes []md_note.MDNoteModel
+	if err := db.Where("owner_id = ?", u.ID).Find(&mdNotes).Error; err != nil {
+		return mdNotes, err
+	}
+	return mdNotes, nil
 }
