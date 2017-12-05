@@ -27,7 +27,7 @@ service postgresql initdb
 chkconfig postgresql on
 ```
 3. Setup local connecction to Postgres in http://suite.boundlessgeo.com/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
-- Change peer to trust in your dev enviroment
+- In pg_hba.conf change peer to trust (Applicable in dev enviroment only!)
 
 
 4. Create database `"development"` and `"testing"`
