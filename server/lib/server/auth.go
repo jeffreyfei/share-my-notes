@@ -48,13 +48,24 @@ func (s *Server) fetchGooglePlusProfile(ctx context.Context, token *oauth2.Token
 	return plusService.People.Get("me").Do()
 }
 
-func (s *Server) getProfileFromSession(r *http.Request) *user.UserModel {
+func (s *Server) checkAuth(r *http.Request) bool {
 	session, err := s.sessionStore.Get(r, defaultSessionID)
 	if err != nil {
-		return nil
+		return false
 	}
 	token, ok := session.Values[oauthSessionKey].(oauth2.Token)
 	if !ok || !token.Valid() {
+		return false
+	}
+	return true
+}
+
+func (s *Server) getProfileFromSession(r *http.Request) *user.UserModel {
+	if !s.checkAuth(r) {
+		return nil
+	}
+	session, err := s.sessionStore.Get(r, defaultSessionID)
+	if err != nil {
 		return nil
 	}
 	profile, ok := session.Values[googleProfileSessionKey].(user.UserModel)
