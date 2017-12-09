@@ -13,8 +13,7 @@ type QueueTestSuite struct {
 	suite.Suite
 }
 
-func createMockJobQueueEntry(op int, payload interface{}) jobQueueEntry {
-	ch := make(chan interface{})
+func createMockJobQueueEntry(op int, payload interface{}, ch chan interface{}) jobQueueEntry {
 	return jobQueueEntry{
 		op,
 		payload,
@@ -45,10 +44,10 @@ func (s *QueueTestSuite) TestEnqueue() {
 }
 
 func (s *QueueTestSuite) TestDequeue() {
-	mockEntry1 := createMockJobQueueEntry(1, "mock-content")
-	mockEntry2 := createMockJobQueueEntry(2, "mock-content")
-	mockEntry3 := createMockJobQueueEntry(3, "mock-content")
-	mockEntry4 := createMockJobQueueEntry(4, "mock-content")
+	mockEntry1 := createMockJobQueueEntry(1, "mock-content", make(chan interface{}))
+	mockEntry2 := createMockJobQueueEntry(2, "mock-content", make(chan interface{}))
+	mockEntry3 := createMockJobQueueEntry(3, "mock-content", make(chan interface{}))
+	mockEntry4 := createMockJobQueueEntry(4, "mock-content", make(chan interface{}))
 	q := new(jobQueue)
 	q.storage = []jobQueueEntry{mockEntry1, mockEntry2, mockEntry3, mockEntry4}
 	q.size = 4
