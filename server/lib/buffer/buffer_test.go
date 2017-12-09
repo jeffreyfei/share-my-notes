@@ -22,7 +22,7 @@ func TestBufferTestSuite(t *testing.T) {
 }
 
 func (s *BufferTestSuite) TestNewJob() {
-	b := NewBuffer(1000, 4)
+	b := NewBuffer(1000, 4, map[int]JobActionFunc{})
 	b.NewJob(1, "mock-payload", make(chan interface{}))
 	assert.Equal(s.T(), 1, len(b.queue.storage))
 	b.NewJob(1, "mock-payload", make(chan interface{}))
@@ -30,7 +30,7 @@ func (s *BufferTestSuite) TestNewJob() {
 }
 
 func (s *BufferTestSuite) TestJobCount() {
-	b := NewBuffer(1000, 4)
+	b := NewBuffer(1000, 4, map[int]JobActionFunc{})
 	jobs := []jobQueueEntry{
 		createMockJobQueueEntry(1, "mock-payload", make(chan interface{})),
 		createMockJobQueueEntry(1, "mock-payload", make(chan interface{})),
@@ -43,7 +43,7 @@ func (s *BufferTestSuite) TestJobCount() {
 }
 
 func (s *BufferTestSuite) TestProcJobQueue() {
-	b := NewBuffer(1000, 4)
+	b := NewBuffer(1000, 4, map[int]JobActionFunc{})
 	b.actionFunc = map[int]JobActionFunc{
 		1: mockActionFunc,
 	}

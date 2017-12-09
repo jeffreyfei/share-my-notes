@@ -6,10 +6,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const (
-	SaveMDNote = 1
-)
-
 type Buffer struct {
 	queue      jobQueue
 	actionFunc map[int]JobActionFunc
@@ -17,17 +13,13 @@ type Buffer struct {
 	maxProc    int
 }
 
-func NewBuffer(timeout, maxProc int) *Buffer {
+func NewBuffer(timeout, maxProc int, jobActionFunc map[int]JobActionFunc) *Buffer {
 	buffer := new(Buffer)
 	buffer.queue = jobQueue{}
 	buffer.timeout = timeout
 	buffer.maxProc = maxProc
-	buffer.actionFunc = buildActionFunc()
+	buffer.actionFunc = jobActionFunc
 	return buffer
-}
-
-func buildActionFunc() map[int]JobActionFunc {
-	return map[int]JobActionFunc{}
 }
 
 func (b *Buffer) NewJob(op int, payload interface{}, doneCh chan interface{}) {
