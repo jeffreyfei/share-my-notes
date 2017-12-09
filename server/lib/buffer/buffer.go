@@ -2,6 +2,8 @@ package buffer
 
 import (
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -38,9 +40,12 @@ func (b *Buffer) JobCount() int {
 
 func (b *Buffer) StartProc() {
 	for {
-		jobs := b.queue.Dequeue(b.maxProc)
-		for _, job := range jobs {
-			go b.actionFunc[job.Op](job.Payload, job.DoneCh)
+		if jobs, err := b.queue.Dequeue(b.maxProc); err != nil {
+			log.WithField("err", err).Error("Dequeue operation failed")
+		} else {
+			for _, job := range jobs {
+				go b.actionFunc[job.Op](job.Payload, job.DoneCh)
+			}
 		}
 		time.Sleep(time.Duration(b.timeout) * time.Millisecond)
 	}
