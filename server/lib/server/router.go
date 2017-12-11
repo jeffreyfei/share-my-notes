@@ -31,6 +31,26 @@ func buildRoutes(s *Server) routes {
 			"/auth/google/logout",
 			s.googleLogoutHandler,
 		},
+		route{
+			"GET",
+			"/note/md/{id}/get",
+			s.mdGetHandler,
+		},
+		route{
+			"POST",
+			"/note/md/{id}/update",
+			s.mdUpdateHandler,
+		},
+		route{
+			"POST",
+			"/note/md/{id}/delete",
+			s.mdDeleteHandler,
+		},
+		route{
+			"POST",
+			"/note/md/create",
+			s.mdCreateHandler,
+		},
 	}
 }
 

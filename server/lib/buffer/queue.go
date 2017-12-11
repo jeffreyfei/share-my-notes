@@ -7,9 +7,10 @@ import (
 )
 
 type jobQueueEntry struct {
-	Op        int
+	Op        JobActionFunc
 	Payload   interface{}
 	DoneCh    chan interface{}
+	ErrCh     chan error
 	CreatedAt time.Time
 }
 
@@ -18,18 +19,19 @@ type jobQueue struct {
 	size    int
 }
 
-type JobActionFunc func(interface{}, chan interface{})
+type JobActionFunc func(interface{}, chan interface{}, chan error)
 
 func (q *jobQueue) Size() int {
 	return q.size
 }
 
-func (q *jobQueue) Enqueue(op int, payload interface{}, doneCh chan interface{}) {
+func (q *jobQueue) Enqueue(op JobActionFunc, payload interface{}, doneCh chan interface{}, errCh chan error) {
 	q.size++
 	q.storage = append(q.storage, jobQueueEntry{
 		op,
 		payload,
 		doneCh,
+		errCh,
 		time.Now(),
 	})
 }

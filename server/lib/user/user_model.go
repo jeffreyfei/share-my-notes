@@ -35,6 +35,14 @@ func HandleLogin(db *gorm.DB, user *UserModel) (*UserModel, error) {
 	return &existingUser, nil
 }
 
+func GetUserByGoogleID(db *gorm.DB, googleID string) (*UserModel, error) {
+	var user UserModel
+	if err := db.Where("google_id = ?", googleID).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func NewUser(db *gorm.DB, user *UserModel) error {
 	user.CreatedAt = time.Now()
 	user.LastLoggedInAt = time.Now()

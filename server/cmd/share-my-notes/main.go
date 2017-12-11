@@ -38,7 +38,8 @@ func initServer() {
 	clientSecret := os.Getenv("GOOGLESECRET")
 	baseURL := os.Getenv("BASE_URL")
 	sessionKey := os.Getenv("SESSION_KEY")
-	webServer = server.NewServer(db, baseURL, sessionKey, clientID, clientSecret)
+	webServer = server.NewServer(db, baseURL, sessionKey, clientID, clientSecret, "mock-url")
+	webServer.StartBufferProc()
 }
 
 func main() {

@@ -7,23 +7,21 @@ import (
 )
 
 type Buffer struct {
-	queue      jobQueue
-	actionFunc map[int]JobActionFunc
-	timeout    int
-	maxProc    int
+	queue   jobQueue
+	timeout int
+	maxProc int
 }
 
-func NewBuffer(timeout, maxProc int, jobActionFunc map[int]JobActionFunc) *Buffer {
+func NewBuffer(timeout, maxProc int) *Buffer {
 	buffer := new(Buffer)
 	buffer.queue = jobQueue{}
 	buffer.timeout = timeout
 	buffer.maxProc = maxProc
-	buffer.actionFunc = jobActionFunc
 	return buffer
 }
 
-func (b *Buffer) NewJob(op int, payload interface{}, doneCh chan interface{}) {
-	b.queue.Enqueue(op, payload, doneCh)
+func (b *Buffer) NewJob(op JobActionFunc, payload interface{}, doneCh chan interface{}, errCh chan error) {
+	b.queue.Enqueue(op, payload, doneCh, errCh)
 }
 
 func (b *Buffer) JobCount() int {
@@ -41,7 +39,7 @@ func (b *Buffer) procJobQueue() {
 		log.WithField("err", err).Error("Dequeue failed")
 	} else {
 		for _, job := range jobs {
-			go b.actionFunc[job.Op](job.Payload, job.DoneCh)
+			go job.Op(job.Payload, job.DoneCh, job.ErrCh)
 		}
 	}
 	time.Sleep(time.Duration(b.timeout) * time.Millisecond)

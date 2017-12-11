@@ -76,6 +76,15 @@ func (s *UserModelTestSuite) TestHandleLoginNewUser() {
 	assert.Equal(s.T(), user.ImageURL, savedUser.ImageURL)
 }
 
+func (s *UserModelTestSuite) TestGetUserByGoogleID() {
+	mockUser := createMockUser(int64(1), "1234")
+	assert.NoError(s.T(), s.db.Create(&mockUser).Error)
+	user, err := GetUserByGoogleID(s.db, "1234")
+	assert.NoError(s.T(), err)
+	assert.Equal(s.T(), user.ID, int64(1))
+	assert.Equal(s.T(), user.GoogleID, "1234")
+}
+
 func (s *UserModelTestSuite) TestHandleLoginExistingUser() {
 	user := createMockUser(int64(1), "1")
 	assert.NoError(s.T(), s.db.Save(&user).Error)

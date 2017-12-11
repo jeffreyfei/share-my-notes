@@ -31,6 +31,14 @@ func New(db *gorm.DB, ownerID int64, category, rawText string) error {
 	return db.Create(&newNote).Error
 }
 
+func Get(db *gorm.DB, id int64) (MDNoteModel, error) {
+	var note MDNoteModel
+	if err := db.First(&note, id).Error; err != nil {
+		return MDNoteModel{}, err
+	}
+	return note, nil
+}
+
 func Update(db *gorm.DB, id int64, rawText string) error {
 	var note MDNoteModel
 	if err := db.First(&note, id).Error; err != nil {
