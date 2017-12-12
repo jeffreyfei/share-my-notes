@@ -13,11 +13,12 @@ type QueueTestSuite struct {
 	suite.Suite
 }
 
-func createMockJobQueueEntry(op int, payload interface{}, ch chan interface{}) jobQueueEntry {
+func createMockJobQueueEntry(op JobActionFunc, payload interface{}, done chan interface{}, errCh chan error) jobQueueEntry {
 	return jobQueueEntry{
 		op,
 		payload,
-		ch,
+		done,
+		errCh,
 		time.Now(),
 	}
 }
@@ -37,17 +38,17 @@ func (s *QueueTestSuite) TestSize() {
 
 func (s *QueueTestSuite) TestEnqueue() {
 	q := new(jobQueue)
-	q.Enqueue(1, "mock-content", make(chan interface{}))
-	q.Enqueue(2, "mock-content", make(chan interface{}))
+	q.Enqueue(mockActionFunc, "mock-content", make(chan interface{}), make(chan error))
+	q.Enqueue(mockActionFunc, "mock-content", make(chan interface{}), make(chan error))
 	assert.Equal(s.T(), 2, q.size)
 	assert.Equal(s.T(), 2, len(q.storage))
 }
 
 func (s *QueueTestSuite) TestDequeue() {
-	mockEntry1 := createMockJobQueueEntry(1, "mock-content", make(chan interface{}))
-	mockEntry2 := createMockJobQueueEntry(2, "mock-content", make(chan interface{}))
-	mockEntry3 := createMockJobQueueEntry(3, "mock-content", make(chan interface{}))
-	mockEntry4 := createMockJobQueueEntry(4, "mock-content", make(chan interface{}))
+	mockEntry1 := createMockJobQueueEntry(mockActionFunc, "mock-content", make(chan interface{}), make(chan error))
+	mockEntry2 := createMockJobQueueEntry(mockActionFunc, "mock-content", make(chan interface{}), make(chan error))
+	mockEntry3 := createMockJobQueueEntry(mockActionFunc, "mock-content", make(chan interface{}), make(chan error))
+	mockEntry4 := createMockJobQueueEntry(mockActionFunc, "mock-content", make(chan interface{}), make(chan error))
 	q := new(jobQueue)
 	q.storage = []jobQueueEntry{mockEntry1, mockEntry2, mockEntry3, mockEntry4}
 	q.size = 4
@@ -56,7 +57,6 @@ func (s *QueueTestSuite) TestDequeue() {
 	assert.Equal(s.T(), 1, len(q.storage))
 	assert.Equal(s.T(), 1, q.size)
 	assert.Equal(s.T(), 3, len(subQueue))
-	assert.Equal(s.T(), mockEntry4, q.storage[0])
 	subQueue, err = q.Dequeue(3)
 	assert.NoError(s.T(), err)
 	assert.Empty(s.T(), q.storage)

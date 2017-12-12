@@ -12,7 +12,7 @@ type BufferTestSuite struct {
 	suite.Suite
 }
 
-func mockActionFunc(payload interface{}, ch chan interface{}) {
+func mockActionFunc(payload interface{}, ch chan interface{}, errCh chan error) {
 	ch <- payload.(int) + 1
 }
 
@@ -22,18 +22,18 @@ func TestBufferTestSuite(t *testing.T) {
 }
 
 func (s *BufferTestSuite) TestNewJob() {
-	b := NewBuffer(1000, 4, map[int]JobActionFunc{})
-	b.NewJob(1, "mock-payload", make(chan interface{}))
+	b := NewBuffer(1000, 4)
+	b.NewJob(mockActionFunc, "mock-payload", make(chan interface{}), make(chan error))
 	assert.Equal(s.T(), 1, len(b.queue.storage))
-	b.NewJob(1, "mock-payload", make(chan interface{}))
+	b.NewJob(mockActionFunc, "mock-payload", make(chan interface{}), make(chan error))
 	assert.Equal(s.T(), 2, len(b.queue.storage))
 }
 
 func (s *BufferTestSuite) TestJobCount() {
-	b := NewBuffer(1000, 4, map[int]JobActionFunc{})
+	b := NewBuffer(1000, 4)
 	jobs := []jobQueueEntry{
-		createMockJobQueueEntry(1, "mock-payload", make(chan interface{})),
-		createMockJobQueueEntry(1, "mock-payload", make(chan interface{})),
+		createMockJobQueueEntry(mockActionFunc, "mock-payload", make(chan interface{}), make(chan error)),
+		createMockJobQueueEntry(mockActionFunc, "mock-payload", make(chan interface{}), make(chan error)),
 	}
 	b.queue = jobQueue{
 		jobs,
@@ -43,15 +43,12 @@ func (s *BufferTestSuite) TestJobCount() {
 }
 
 func (s *BufferTestSuite) TestProcJobQueue() {
-	b := NewBuffer(1000, 4, map[int]JobActionFunc{})
-	b.actionFunc = map[int]JobActionFunc{
-		1: mockActionFunc,
-	}
+	b := NewBuffer(1000, 4)
 	ch1 := make(chan interface{})
 	ch2 := make(chan interface{})
 	jobs := []jobQueueEntry{
-		createMockJobQueueEntry(1, 1, ch1),
-		createMockJobQueueEntry(1, 2, ch2),
+		createMockJobQueueEntry(mockActionFunc, 1, ch1, make(chan error)),
+		createMockJobQueueEntry(mockActionFunc, 2, ch2, make(chan error)),
 	}
 	b.queue = jobQueue{
 		jobs,
