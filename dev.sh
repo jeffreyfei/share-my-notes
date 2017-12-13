@@ -1,7 +1,7 @@
 if [ $1 == "build" ]; then
     mkdir -p bin
     pushd bin
-        go build ../server/cmd/share-my-notes
+        go build ../server/cmd/server
     popd
 elif [ $1 == "up" ]; then
     pushd server
