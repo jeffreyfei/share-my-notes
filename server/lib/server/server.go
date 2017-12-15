@@ -62,17 +62,17 @@ func (s *Server) buildRoutes() router.Routes {
 		},
 		router.Route{
 			"GET",
-			"/note/md/{id}/get",
+			"/note/md/get/{id}",
 			s.mdGetHandler,
 		},
 		router.Route{
 			"POST",
-			"/note/md/{id}/update",
+			"/note/md/update/{id}",
 			s.mdUpdateHandler,
 		},
 		router.Route{
 			"POST",
-			"/note/md/{id}/delete",
+			"/note/md/delete/{id}",
 			s.mdDeleteHandler,
 		},
 		router.Route{
