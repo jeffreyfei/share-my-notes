@@ -9,6 +9,7 @@ elif [ $1 == "up" ]; then
         glide up
     popd
 elif [ $1 == "run-server" ]; then
+    export LB_URL=http://localhost:3001
     export PGHOST=/var/run/postgresql
     export PGENV=development
     export PGUSER=postgres

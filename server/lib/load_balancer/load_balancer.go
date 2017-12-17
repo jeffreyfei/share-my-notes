@@ -18,41 +18,48 @@ type LoadBalancer struct {
 func NewLoadBalancer() *LoadBalancer {
 	lb := new(LoadBalancer)
 	lb.ClientRouter = router.BuildRouter(lb.buildClientRoutes())
-	lb.ClientRouter = router.BuildRouter(lb.buildProviderRoutes())
+	lb.ProviderRouter = router.BuildRouter(lb.buildProviderRoutes())
 	lb.nextProvider = 0
 	lb.providerClient = &http.Client{}
+	lb.Providers = make(map[string]int)
 	return lb
 }
 
-func (l *LoadBalancer) buildClientRoutes() router.Routes {
+func (lb *LoadBalancer) buildClientRoutes() router.Routes {
 	return router.Routes{
 		router.Route{
 			"GET",
 			"/md/{action}/{id}",
-			l.mdClientHandler,
+			lb.mdClientHandler,
 		},
 		router.Route{
 			"POST",
 			"/md/{action}/{id}",
-			l.mdClientHandler,
+			lb.mdClientHandler,
 		},
 		router.Route{
 			"POST",
 			"/md/{action}",
-			l.mdClientHandler,
+			lb.mdClientHandler,
 		},
 		router.Route{
 			"GET",
 			"/auth/google/{action}",
-			l.googleAuthHandler,
+			lb.googleAuthHandler,
 		},
 	}
 }
 
-func (l *LoadBalancer) buildProviderRoutes() router.Routes {
-	return router.Routes{}
+func (lb *LoadBalancer) buildProviderRoutes() router.Routes {
+	return router.Routes{
+		router.Route{
+			"POST",
+			"/provider/register",
+			lb.providerRegisterHandler,
+		},
+	}
 }
 
-func (l *LoadBalancer) getNextProvider() string {
+func (lb *LoadBalancer) getNextProvider() string {
 	return ""
 }

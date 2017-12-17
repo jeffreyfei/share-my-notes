@@ -3,9 +3,13 @@ package server
 import (
 	"encoding/gob"
 	"fmt"
+	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/jeffreyfei/share-my-notes/server/lib/buffer"
 	"github.com/jeffreyfei/share-my-notes/server/lib/router"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -41,6 +45,23 @@ func NewServer(db *gorm.DB, baseURL, sessionKey, clientID, clientSecret, lbURL s
 
 func (s *Server) StartBufferProc() {
 	go s.buffer.StartProc()
+}
+
+func (s *Server) RegisterLoadBalancer() {
+	payload := url.Values{}
+	payload.Add("url", s.baseURL)
+	route := fmt.Sprintf("%s/provider/register", s.lbURL)
+	if res, err := http.PostForm(route, payload); err != nil || res.StatusCode != http.StatusOK {
+		if err != nil {
+			log.WithField("err", err).Error("Failed to register to load balancer. Trying again in 1s.")
+		} else {
+			log.WithField("status", res.StatusCode).Error("Failed to register to load balancer. Trying again in 1s.")
+		}
+		time.Sleep(1000 * time.Millisecond)
+		go s.RegisterLoadBalancer()
+	} else {
+		log.Info("Successfully registered to load balancer")
+	}
 }
 
 func (s *Server) buildRoutes() router.Routes {

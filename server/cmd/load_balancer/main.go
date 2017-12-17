@@ -20,8 +20,8 @@ func initLoadBalancer() {
 
 func main() {
 	initLoadBalancer()
-	client_port := os.Getenv("CLIENT_PORT")
-	provider_port := os.Getenv("PROVIDER_PORT")
+	client_port := fmt.Sprintf(":%s", os.Getenv("CLIENT_PORT"))
+	provider_port := fmt.Sprintf(":%s", os.Getenv("PROVIDER_PORT"))
 	go http.ListenAndServe(client_port, loadBalancer.ClientRouter)
 	go http.ListenAndServe(provider_port, loadBalancer.ProviderRouter)
 	log.Infof("Load balancer running on port: %s (client), %s (provider)", client_port, provider_port)

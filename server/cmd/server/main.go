@@ -38,7 +38,8 @@ func initServer() {
 	clientSecret := os.Getenv("GOOGLESECRET")
 	baseURL := os.Getenv("BASE_URL")
 	sessionKey := os.Getenv("SESSION_KEY")
-	webServer = server.NewServer(db, baseURL, sessionKey, clientID, clientSecret, "mock-url")
+	lbURL := os.Getenv("LB_URL")
+	webServer = server.NewServer(db, baseURL, sessionKey, clientID, clientSecret, lbURL)
 	webServer.StartBufferProc()
 }
 
@@ -47,5 +48,7 @@ func main() {
 	initServer()
 	port := fmt.Sprintf(":%s", os.Getenv("SERVER_PORT"))
 	log.Infof("Server running on port %s", port)
-	log.Fatal(http.ListenAndServe(port, webServer.Router))
+	go http.ListenAndServe(port, webServer.Router)
+	go webServer.RegisterLoadBalancer()
+	fmt.Scanln()
 }
