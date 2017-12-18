@@ -9,12 +9,12 @@ import (
 
 func (lb *LoadBalancer) googleAuthHandler(w http.ResponseWriter, r *http.Request) {
 	action := mux.Vars(r)["action"]
-	done := make(chan struct{})
+	done := make(chan string)
 	req := new(request)
 	req.w = w
 	req.r = r
 	req.route = fmt.Sprintf("/auth/google/%s", action)
-	go lb.forwardSyncRequest(req, done)
-	<-done
-	w.WriteHeader(http.StatusOK)
+	go lb.forwardRedirectRequest(req, done)
+	url := <-done
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }

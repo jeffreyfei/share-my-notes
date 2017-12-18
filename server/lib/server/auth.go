@@ -24,6 +24,8 @@ const (
 	oauthSessionKey         = "oauth_token"
 )
 
+var test *http.Request
+
 func validateRedirectURL(path string) (string, error) {
 	if path == "" {
 		return "/", nil
@@ -101,7 +103,7 @@ func (s *Server) googleLoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	url := s.oauth2Config.AuthCodeURL(sessionID, oauth2.ApprovalForce, oauth2.AccessTypeOnline)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	w.Header().Add("url", url)
 }
 
 func (s *Server) googleLoginCallbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -112,7 +114,7 @@ func (s *Server) googleLoginCallbackHandler(w http.ResponseWriter, r *http.Reque
 	}
 	redirectURL, ok := oauthFlowSession.Values[redirectKey].(string)
 	if !ok {
-		log.WithField("err", err).Error("Invalid state parameter")
+		log.WithField("err", err).Error("Failed get redirect URL.")
 		return
 	}
 	token, err := s.oauth2Config.Exchange(context.Background(), r.FormValue(codeKey))
@@ -142,7 +144,7 @@ func (s *Server) googleLoginCallbackHandler(w http.ResponseWriter, r *http.Reque
 		log.WithField("err", err).Error("Could not save session")
 		return
 	}
-	http.Redirect(w, r, redirectURL, http.StatusFound)
+	w.Header().Add("url", redirectURL)
 }
 
 func (s *Server) googleLogoutHandler(w http.ResponseWriter, r *http.Request) {

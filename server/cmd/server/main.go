@@ -38,8 +38,9 @@ func initServer() {
 	clientSecret := os.Getenv("GOOGLESECRET")
 	baseURL := os.Getenv("BASE_URL")
 	sessionKey := os.Getenv("SESSION_KEY")
-	lbURL := os.Getenv("LB_URL")
-	webServer = server.NewServer(db, baseURL, sessionKey, clientID, clientSecret, lbURL)
+	lbPubURL := os.Getenv("LB_PUB_URL")
+	lbPriURL := os.Getenv("LB_PRI_URL")
+	webServer = server.NewServer(db, baseURL, sessionKey, clientID, clientSecret, lbPriURL, lbPubURL)
 	webServer.StartBufferProc()
 }
 

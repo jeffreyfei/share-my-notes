@@ -26,16 +26,18 @@ type Server struct {
 	oauth2Config *oauth2.Config
 	sessionStore *sessions.CookieStore
 	buffer       *buffer.Buffer
-	lbURL        string
+	lbPublicURL  string
+	lbPrivateURL string
 }
 
-func NewServer(db *gorm.DB, baseURL, sessionKey, clientID, clientSecret, lbURL string) *Server {
+func NewServer(db *gorm.DB, baseURL, sessionKey, clientID, clientSecret, lbPrivateURL, lbPublicURL string) *Server {
 	server := Server{}
 	server.db = db
 	server.Router = router.BuildRouter(server.buildRoutes())
 	server.baseURL = baseURL
-	server.lbURL = lbURL
-	server.oauth2Config = getOauthConfig(baseURL, clientID, clientSecret)
+	server.lbPublicURL = lbPublicURL
+	server.lbPrivateURL = lbPrivateURL
+	server.oauth2Config = getOauthConfig(lbPublicURL, clientID, clientSecret)
 	server.sessionStore = getSessionStore(sessionKey)
 	server.buffer = buffer.NewBuffer(5000, 100)
 	gob.Register(user.UserModel{})
@@ -50,7 +52,7 @@ func (s *Server) StartBufferProc() {
 func (s *Server) RegisterLoadBalancer() {
 	payload := url.Values{}
 	payload.Add("url", s.baseURL)
-	route := fmt.Sprintf("%s/provider/register", s.lbURL)
+	route := fmt.Sprintf("%s/provider/register", s.lbPrivateURL)
 	if res, err := http.PostForm(route, payload); err != nil || res.StatusCode != http.StatusOK {
 		if err != nil {
 			log.WithField("err", err).Error("Failed to register to load balancer. Trying again in 1s.")

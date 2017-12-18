@@ -42,7 +42,7 @@ func (s *Server) mdCreateCallback(recPayload interface{}, doneCh chan interface{
 	case err := <-errCh:
 		form.Add("err", err.Error())
 	}
-	http.PostForm(fmt.Sprintf("%s/response/md/create", s.lbURL), form)
+	http.PostForm(fmt.Sprintf("%s/response/md/create", s.lbPrivateURL), form)
 }
 
 func (s *Server) mdCreateHandler(w http.ResponseWriter, r *http.Request) {
@@ -101,7 +101,7 @@ func (s *Server) mdGetCallback(recPayload interface{}, doneCh chan interface{}, 
 		form.Add("err", err.Error())
 		log.WithField("err", err).Error("Getting MD notes failed")
 	}
-	http.PostForm(fmt.Sprintf("%s/response/md/%d/get", s.lbURL, id), form)
+	http.PostForm(fmt.Sprintf("%s/response/md/%d/get", s.lbPrivateURL, id), form)
 }
 
 func (s *Server) mdGetHandler(w http.ResponseWriter, r *http.Request) {
@@ -142,7 +142,7 @@ func (s *Server) mdUpdateCallback(recPayload interface{}, doneCh chan interface{
 	case err := <-errCh:
 		form.Add("err", err.Error())
 	}
-	http.PostForm(fmt.Sprintf("%s/response/md/%d/update", s.lbURL, id), form)
+	http.PostForm(fmt.Sprintf("%s/response/md/%d/update", s.lbPrivateURL, id), form)
 }
 
 func (s *Server) mdUpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -183,7 +183,7 @@ func (s *Server) mdDeleteCallback(recPayload interface{}, doneCh chan interface{
 		form.Add("err", err.Error())
 		log.WithField("err", err).Error("Deleting MD notes failed")
 	}
-	http.PostForm(fmt.Sprintf("%s/response/md/%d/get", s.lbURL, id), form)
+	http.PostForm(fmt.Sprintf("%s/response/md/%d/get", s.lbPrivateURL, id), form)
 }
 
 func (s *Server) mdDeleteHandler(w http.ResponseWriter, r *http.Request) {
