@@ -51,7 +51,7 @@ func TestMDHandlerTestSuite(t *testing.T) {
 	s := new(MDHandlerTestSuite)
 	var err error
 	s.db, err = db.GetDB()
-	s.s = NewServer(s.db, "", "", "", "", "/mockaddr")
+	s.s = NewServer(s.db, "", "", "", "", "", "")
 	assert.NoError(t, err)
 	suite.Run(t, s)
 }

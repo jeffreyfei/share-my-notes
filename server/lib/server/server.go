@@ -54,11 +54,7 @@ func (s *Server) RegisterLoadBalancer() {
 	payload.Add("url", s.baseURL)
 	route := fmt.Sprintf("%s/provider/register", s.lbPrivateURL)
 	if res, err := http.PostForm(route, payload); err != nil || res.StatusCode != http.StatusOK {
-		if err != nil {
-			log.WithField("err", err).Error("Failed to register to load balancer. Trying again in 1s.")
-		} else {
-			log.WithField("status", res.StatusCode).Error("Failed to register to load balancer. Trying again in 1s.")
-		}
+		log.WithField("err", err).Error("Failed to register to load balancer. Trying again in 1s.")
 		time.Sleep(1000 * time.Millisecond)
 		go s.RegisterLoadBalancer()
 	} else {
@@ -68,6 +64,11 @@ func (s *Server) RegisterLoadBalancer() {
 
 func (s *Server) buildRoutes() router.Routes {
 	return router.Routes{
+		router.Route{
+			"GET",
+			"/report/status",
+			s.reportStatusHandler,
+		},
 		router.Route{
 			"GET",
 			"/auth/google/login",

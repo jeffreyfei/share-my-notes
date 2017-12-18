@@ -15,7 +15,8 @@ var (
 )
 
 func initLoadBalancer() {
-	loadBalancer = load_balancer.NewLoadBalancer()
+	loadBalancer = load_balancer.NewLoadBalancer(30000)
+	loadBalancer.StartHealthCheck()
 }
 
 func main() {
