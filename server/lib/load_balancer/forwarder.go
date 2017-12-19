@@ -84,6 +84,4 @@ func (lb *LoadBalancer) forwardRedirectRequest(req *request, done chan string) {
 
 // Foward async tasks towards the providers (e.g. MD Compilation)
 // Returns success to the client as long as the server receives the payload
-func (lb *LoadBalancer) forwardAsyncRequest(req *request, done chan struct{}) {
-
-}
+func (lb *LoadBalancer) forwardAsyncRequest(req *request, done chan struct{}) {}

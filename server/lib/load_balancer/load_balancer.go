@@ -13,6 +13,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type HttpClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 type provider struct {
 	url     string
 	idleInd int
@@ -24,7 +28,7 @@ type LoadBalancer struct {
 	Providers           []provider
 	nextProvider        int
 	healthCheckInterval int
-	providerClient      *http.Client
+	providerClient      HttpClient
 }
 
 func NewLoadBalancer(heatlCheckInterval int) *LoadBalancer {
