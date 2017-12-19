@@ -20,7 +20,8 @@ type mdCompilePayload struct {
 	Category string
 }
 
-// Action function that will be added to the job queue
+// Creates the MD note entry in the database
+// Action function that gets added to the job queue
 func (s *Server) mdCreateAction(payload interface{}, doneCh chan interface{}, errCh chan error) {
 	defer close(doneCh)
 	defer close(errCh)
@@ -33,7 +34,8 @@ func (s *Server) mdCreateAction(payload interface{}, doneCh chan interface{}, er
 	}
 }
 
-// Callback function that streams the result back to the load balancer once the job is finished
+// Creates a MD creation job in the job queue
+// Returns the result back to the load balancer once the job is finished
 func (s *Server) mdCreateCallback(recPayload interface{}, doneCh chan interface{}, errCh chan error) {
 	s.buffer.NewJob(s.mdCreateAction, recPayload, doneCh, make(chan error))
 	form := url.Values{}
@@ -45,6 +47,9 @@ func (s *Server) mdCreateCallback(recPayload interface{}, doneCh chan interface{
 	http.PostForm(fmt.Sprintf("%s/response/md/create", s.lbPrivateURL), form)
 }
 
+// Handles Markdown Notes creation
+// Calls the MD Create callback function to create a creation job on the job queue
+// Does not wait for the creation job to finish
 func (s *Server) mdCreateHandler(w http.ResponseWriter, r *http.Request) {
 	profile := s.getProfileFromSession(r)
 	currentUser, err := user.GetUserByGoogleID(s.db, profile.GoogleID)
@@ -69,6 +74,8 @@ type mdGetPayload struct {
 	Category     string
 }
 
+// Retrieves a MD note entry from database
+// Action function that gets added to the job queue
 func (s *Server) mdGetAction(payload interface{}, doneCh chan interface{}, errCh chan error) {
 	defer close(doneCh)
 	defer close(errCh)
@@ -86,6 +93,8 @@ func (s *Server) mdGetAction(payload interface{}, doneCh chan interface{}, errCh
 	}
 }
 
+// Creates a mdGetAction job on the job queue
+// Returns the retrieve note entry to the load balancer once the job is processed
 func (s *Server) mdGetCallback(recPayload interface{}, doneCh chan interface{}, errCh chan error) {
 	id := recPayload.(int64)
 	s.buffer.NewJob(s.mdGetAction, id, doneCh, errCh)
@@ -104,6 +113,9 @@ func (s *Server) mdGetCallback(recPayload interface{}, doneCh chan interface{}, 
 	http.PostForm(fmt.Sprintf("%s/response/md/%d/get", s.lbPrivateURL, id), form)
 }
 
+// Handles MD note retrieval requests
+// Calls mdGetCallback to create a MD note retrieval job on the job queue
+// Does not wait for the job to finish
 func (s *Server) mdGetHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
@@ -121,6 +133,8 @@ type mdUpdatePayload struct {
 	RawText string
 }
 
+// Updates a MD note entry in the database
+// Action function that gets added to the job queue
 func (s *Server) mdUpdateAction(payload interface{}, doneCh chan interface{}, errCh chan error) {
 	defer close(doneCh)
 	defer close(errCh)
@@ -133,6 +147,8 @@ func (s *Server) mdUpdateAction(payload interface{}, doneCh chan interface{}, er
 	}
 }
 
+// Creates mdUpdateAction on the job queue
+// Returns a response to the load balancer when the job is processed
 func (s *Server) mdUpdateCallback(recPayload interface{}, doneCh chan interface{}, errCh chan error) {
 	s.buffer.NewJob(s.mdUpdateAction, recPayload, doneCh, errCh)
 	id := recPayload.(mdUpdatePayload).ID
@@ -145,6 +161,9 @@ func (s *Server) mdUpdateCallback(recPayload interface{}, doneCh chan interface{
 	http.PostForm(fmt.Sprintf("%s/response/md/%d/update", s.lbPrivateURL, id), form)
 }
 
+// Handles MD note update requests
+// Calls mdUpdateCallback to create a MD update job on the job queue
+// Does not wait for the job to finish
 func (s *Server) mdUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
@@ -161,6 +180,8 @@ func (s *Server) mdUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// Deletes a MD note entry fom database
+// Action function that gets added to the job queue
 func (s *Server) mdDeleteAction(payload interface{}, doneCh chan interface{}, errCh chan error) {
 	defer close(doneCh)
 	defer close(errCh)
@@ -172,6 +193,8 @@ func (s *Server) mdDeleteAction(payload interface{}, doneCh chan interface{}, er
 	}
 }
 
+// Creates mdDeleteAction on the job queue
+// Returns a response to the load balancer when the job is processed
 func (s *Server) mdDeleteCallback(recPayload interface{}, doneCh chan interface{}, errCh chan error) {
 	id := recPayload.(int64)
 	s.buffer.NewJob(s.mdDeleteAction, id, doneCh, errCh)
@@ -186,6 +209,9 @@ func (s *Server) mdDeleteCallback(recPayload interface{}, doneCh chan interface{
 	http.PostForm(fmt.Sprintf("%s/response/md/%d/get", s.lbPrivateURL, id), form)
 }
 
+// Handles MD note delete requests
+// Calls mdDeleteCallback to create a job on the job queue
+// Does not wait for the job to finish
 func (s *Server) mdDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	if err != nil {

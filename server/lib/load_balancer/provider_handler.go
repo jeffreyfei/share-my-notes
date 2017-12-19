@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Handles provider registration
 func (lb *LoadBalancer) providerRegisterHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	url := r.PostFormValue("url")

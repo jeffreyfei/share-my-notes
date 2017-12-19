@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Copy header from inbound request from client to outbound request to provider
 func copyReqHeader(inReq *http.Request, outReq *http.Request) {
 	for k, v := range inReq.Header {
 		values := ""
@@ -21,6 +22,7 @@ func copyReqHeader(inReq *http.Request, outReq *http.Request) {
 	}
 }
 
+// Extracts the form object from requests
 func getForm(inReq *http.Request) url.Values {
 	inReq.ParseForm()
 	form := url.Values{}
@@ -37,6 +39,7 @@ func getForm(inReq *http.Request) url.Values {
 	return form
 }
 
+// Copy header from incoming respones from provider to outbound response to client
 func copyResHeader(inRes *http.Response, outRes http.ResponseWriter) {
 	for k, v := range inRes.Header {
 		values := ""
@@ -82,6 +85,7 @@ func (lb *LoadBalancer) forwardRedirectRequest(req *request, done chan string) {
 	done <- res.Header.Get("url")
 }
 
+// WIP
 // Foward async tasks towards the providers (e.g. MD Compilation)
 // Returns success to the client as long as the server receives the payload
 func (lb *LoadBalancer) forwardAsyncRequest(req *request, done chan struct{}) {}

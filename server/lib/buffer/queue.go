@@ -19,12 +19,23 @@ type jobQueue struct {
 	size    int
 }
 
+// Interface for the action function that can be added to the buffer
+// Sample implementation:
+// func myActionFunc(payload interface{}, doneCh chan interface{}, errCh chan error) {
+// 		if result, err := performAction(payload.(string)); err != nil {
+// 			errCh <- err
+// 		} else {
+//			doneCh <- result
+//		}
+// }
 type JobActionFunc func(interface{}, chan interface{}, chan error)
 
+// Returns the number of unprocessed actions in the queue
 func (q *jobQueue) Size() int {
 	return q.size
 }
 
+// Adds a new action to the queue
 func (q *jobQueue) Enqueue(op JobActionFunc, payload interface{}, doneCh chan interface{}, errCh chan error) {
 	q.size++
 	q.storage = append(q.storage, jobQueueEntry{
@@ -36,6 +47,8 @@ func (q *jobQueue) Enqueue(op JobActionFunc, payload interface{}, doneCh chan in
 	})
 }
 
+// Returns a batch of actions from the queue
+// The number of actions in the batch is determined by the limit parameter
 func (q *jobQueue) Dequeue(limit int) ([]jobQueueEntry, error) {
 	if limit <= 0 {
 		return []jobQueueEntry{}, errors.New(fmt.Sprintf("Invalid limit: %d", limit))

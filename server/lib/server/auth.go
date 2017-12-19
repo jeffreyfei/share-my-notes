@@ -9,8 +9,8 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/jeffreyfei/share-my-notes/server/lib/user"
-	"github.com/satori/go.uuid"
-	"google.golang.org/api/plus/v1"
+	uuid "github.com/satori/go.uuid"
+	plus "google.golang.org/api/plus/v1"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -24,8 +24,7 @@ const (
 	oauthSessionKey         = "oauth_token"
 )
 
-var test *http.Request
-
+// Validate the format of redirect URL
 func validateRedirectURL(path string) (string, error) {
 	if path == "" {
 		return "/", nil
@@ -41,6 +40,7 @@ func validateRedirectURL(path string) (string, error) {
 	return path, nil
 }
 
+// Get Google Plus profile from Google Plus services
 func (s *Server) fetchGooglePlusProfile(ctx context.Context, token *oauth2.Token) (*plus.Person, error) {
 	client := oauth2.NewClient(ctx, s.oauth2Config.TokenSource(ctx, token))
 	plusService, err := plus.New(client)
@@ -50,6 +50,7 @@ func (s *Server) fetchGooglePlusProfile(ctx context.Context, token *oauth2.Token
 	return plusService.People.Get("me").Do()
 }
 
+// Check if a client request is authenticated
 func (s *Server) checkAuth(r *http.Request) bool {
 	session, err := s.sessionStore.Get(r, defaultSessionID)
 	if err != nil {
@@ -62,6 +63,7 @@ func (s *Server) checkAuth(r *http.Request) bool {
 	return true
 }
 
+// Get cached user profile from session storage
 func (s *Server) getProfileFromSession(r *http.Request) *user.UserModel {
 	if !s.checkAuth(r) {
 		return nil
@@ -77,6 +79,7 @@ func (s *Server) getProfileFromSession(r *http.Request) *user.UserModel {
 	return &profile
 }
 
+// Converts a Google Plus profile to a user model object
 func formatProfile(profile *plus.Person) *user.UserModel {
 	var user user.UserModel
 	user.GoogleID = profile.Id
@@ -85,6 +88,8 @@ func formatProfile(profile *plus.Person) *user.UserModel {
 	return &user
 }
 
+// Handles Google Login request
+// Sends the redirect address back to the load balancer
 func (s *Server) googleLoginHandler(w http.ResponseWriter, r *http.Request) {
 	sessionID := uuid.NewV4().String()
 	oauthFlowSession, err := s.sessionStore.New(r, sessionID)
@@ -106,6 +111,8 @@ func (s *Server) googleLoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("url", url)
 }
 
+// Handles Google Login callbacks
+// Sends the final redirect url back to the load balancer
 func (s *Server) googleLoginCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	oauthFlowSession, err := s.sessionStore.Get(r, r.FormValue(stateKey))
 	if err != nil {
@@ -147,6 +154,8 @@ func (s *Server) googleLoginCallbackHandler(w http.ResponseWriter, r *http.Reque
 	w.Header().Add("url", redirectURL)
 }
 
+// Handle Google Logout requests
+// Clear user information from session
 func (s *Server) googleLogoutHandler(w http.ResponseWriter, r *http.Request) {
 	session, err := s.sessionStore.New(r, defaultSessionID)
 	if err != nil {

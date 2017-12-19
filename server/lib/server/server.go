@@ -30,6 +30,7 @@ type Server struct {
 	lbPrivateURL string
 }
 
+// Initializes a new server instance
 func NewServer(db *gorm.DB, baseURL, sessionKey, clientID, clientSecret, lbPrivateURL, lbPublicURL string) *Server {
 	server := Server{}
 	server.db = db
@@ -45,10 +46,12 @@ func NewServer(db *gorm.DB, baseURL, sessionKey, clientID, clientSecret, lbPriva
 	return &server
 }
 
+// Start processing jobs on the buffer
 func (s *Server) StartBufferProc() {
 	go s.buffer.StartProc()
 }
 
+// Sends a registration request to the load balancer
 func (s *Server) RegisterLoadBalancer() {
 	payload := url.Values{}
 	payload.Add("url", s.baseURL)
@@ -62,6 +65,7 @@ func (s *Server) RegisterLoadBalancer() {
 	}
 }
 
+// Returns a list of available routes
 func (s *Server) buildRoutes() router.Routes {
 	return router.Routes{
 		router.Route{
@@ -107,11 +111,13 @@ func (s *Server) buildRoutes() router.Routes {
 	}
 }
 
+// Create a new session store instance with the given sessionKey
 func getSessionStore(sessionKey string) *sessions.CookieStore {
 	cookieStore := sessions.NewCookieStore([]byte(sessionKey))
 	return cookieStore
 }
 
+// Returns the oauth configuration for Google
 func getOauthConfig(baseURL, clientID, clientSecret string) *oauth2.Config {
 	return &oauth2.Config{
 		RedirectURL:  fmt.Sprintf("%s/auth/google/callback", baseURL),

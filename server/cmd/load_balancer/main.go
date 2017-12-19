@@ -10,15 +10,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Bootstraps and runs the load balancer
+
 var (
 	loadBalancer *load_balancer.LoadBalancer
 )
 
+// Initializes the load balancer instance
 func initLoadBalancer() {
 	loadBalancer = load_balancer.NewLoadBalancer(30000)
 	loadBalancer.StartHealthCheck()
 }
 
+// Bootstrapping
 func main() {
 	initLoadBalancer()
 	client_port := fmt.Sprintf(":%s", os.Getenv("CLIENT_PORT"))

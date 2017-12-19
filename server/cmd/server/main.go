@@ -13,11 +13,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Bootstraps and runs the provider server
+
 var (
 	db        *gorm.DB
 	webServer *server.Server
 )
 
+// Initializes the database and automgirates all the models
 func initDB() {
 	var err error
 	if db, err = dbLib.GetDB(); err != nil {
@@ -33,6 +36,7 @@ func initDB() {
 	}
 }
 
+// Initializes the server instance
 func initServer() {
 	clientID := os.Getenv("GOOGLEKEY")
 	clientSecret := os.Getenv("GOOGLESECRET")
@@ -44,6 +48,7 @@ func initServer() {
 	webServer.StartBufferProc()
 }
 
+// Bootstraping
 func main() {
 	initDB()
 	initServer()

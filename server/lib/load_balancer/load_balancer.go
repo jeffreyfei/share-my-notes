@@ -31,6 +31,7 @@ type LoadBalancer struct {
 	providerClient      HttpClient
 }
 
+// Initializes new load balancer
 func NewLoadBalancer(heatlCheckInterval int) *LoadBalancer {
 	lb := new(LoadBalancer)
 	lb.ClientRouter = router.BuildRouter(lb.buildClientRoutes())
@@ -42,6 +43,8 @@ func NewLoadBalancer(heatlCheckInterval int) *LoadBalancer {
 	return lb
 }
 
+// Start running health check
+// The healthcheck interval is determined by the healthCheckInterval attribute
 func (lb *LoadBalancer) StartHealthCheck() {
 	go func() {
 		for {
@@ -88,12 +91,15 @@ func (lb *LoadBalancer) healthCheck() {
 	lb.computeIdleIndexes(maxJobCount, providerJobs)
 }
 
+// Calculates the idle indexes of providers
+// Greater idle index -> can handle more incoming traffic
 func (lb *LoadBalancer) computeIdleIndexes(maxJobCount int, providerJobs map[string]int) {
 	for i, provider := range lb.Providers {
 		lb.Providers[i].idleInd = maxJobCount - providerJobs[provider.url]
 	}
 }
 
+// Checks if the provider exists
 func (lb *LoadBalancer) hasProvider(url string) bool {
 	for _, provider := range lb.Providers {
 		if provider.url == url {
@@ -103,6 +109,7 @@ func (lb *LoadBalancer) hasProvider(url string) bool {
 	return false
 }
 
+// Returns the routes available for clients
 func (lb *LoadBalancer) buildClientRoutes() router.Routes {
 	return router.Routes{
 		router.Route{
@@ -135,6 +142,7 @@ func (lb *LoadBalancer) buildClientRoutes() router.Routes {
 	}
 }
 
+// Returns the routes available to providers
 func (lb *LoadBalancer) buildProviderRoutes() router.Routes {
 	return router.Routes{
 		router.Route{
@@ -145,6 +153,8 @@ func (lb *LoadBalancer) buildProviderRoutes() router.Routes {
 	}
 }
 
+// Returns the next available provider
+// Providers with high idle indexes will be called repeatly until their idle indexes reach 0
 func (lb *LoadBalancer) getNextProvider() (string, error) {
 	if len(lb.Providers) == 0 {
 		return "", errors.New("no available provider")

@@ -7,6 +7,7 @@ import (
 	"github.com/shurcooL/github_flavored_markdown"
 )
 
+// Compiles MD uses the github_flavored_markdown library from shurcooL
 func CompileMD(input string) string {
 	unsafeHTML := github_flavored_markdown.Markdown([]byte(input))
 	policy := bluemonday.UGCPolicy()

@@ -14,6 +14,7 @@ type Route struct {
 
 type Routes []Route
 
+// Build router from the list of routes provided
 func BuildRouter(routes Routes) *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {

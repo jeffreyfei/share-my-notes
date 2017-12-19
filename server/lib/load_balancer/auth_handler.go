@@ -7,6 +7,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Handles google auth requests from client
+// Calls forwardRedirectRequest in forwarder
 func (lb *LoadBalancer) googleAuthHandler(w http.ResponseWriter, r *http.Request) {
 	action := mux.Vars(r)["action"]
 	done := make(chan string)
