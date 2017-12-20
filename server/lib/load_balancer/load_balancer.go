@@ -32,14 +32,14 @@ type LoadBalancer struct {
 }
 
 // Initializes new load balancer
-func NewLoadBalancer(heatlCheckInterval int) *LoadBalancer {
+func NewLoadBalancer(heathCheckInterval int) *LoadBalancer {
 	lb := new(LoadBalancer)
 	lb.ClientRouter = router.BuildRouter(lb.buildClientRoutes())
 	lb.ProviderRouter = router.BuildRouter(lb.buildProviderRoutes())
 	lb.nextProvider = 0
 	lb.providerClient = &http.Client{}
 	lb.Providers = []provider{}
-	lb.healthCheckInterval = heatlCheckInterval
+	lb.healthCheckInterval = heathCheckInterval
 	return lb
 }
 
