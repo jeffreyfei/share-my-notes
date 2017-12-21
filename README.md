@@ -2,6 +2,7 @@
 - Realtime note sharing platform
 
 # Development
+- Default development server route `localhost:3000`
 ### Prerequisite
 1. Clone the repo to `$GOPATH/src`
 
@@ -29,7 +30,6 @@ chkconfig postgresql on
 3. Setup local connecction to Postgres in http://suite.boundlessgeo.com/docs/latest/dataadmin/pgGettingStarted/firstconnect.html
 - In pg_hba.conf change peer to trust (Applicable in dev enviroment only!)
 
-
 4. Create database `"development"` and `"testing"`
 ### Get dependencies
 ```
@@ -38,6 +38,10 @@ bash dev.sh up
 ### Build server
 ```
 bash dev.sh build
+```
+### Run load balancer
+```
+bash dev.sh run-load-balancer
 ```
 ### Run server
 ```

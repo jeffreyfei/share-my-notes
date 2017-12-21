@@ -20,6 +20,7 @@ func AutoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(&MDNoteModel{}).Error
 }
 
+// Create a new markdown note entry in the database
 func New(db *gorm.DB, ownerID int64, category, rawText string) error {
 	newNote := MDNoteModel{}
 	newNote.OwnerID = ownerID
@@ -31,6 +32,7 @@ func New(db *gorm.DB, ownerID int64, category, rawText string) error {
 	return db.Create(&newNote).Error
 }
 
+// Get a markdown note entry from database via ID
 func Get(db *gorm.DB, id int64) (MDNoteModel, error) {
 	var note MDNoteModel
 	if err := db.First(&note, id).Error; err != nil {
@@ -39,6 +41,7 @@ func Get(db *gorm.DB, id int64) (MDNoteModel, error) {
 	return note, nil
 }
 
+// Update a markdown note entry in database via ID
 func Update(db *gorm.DB, id int64, rawText string) error {
 	var note MDNoteModel
 	if err := db.First(&note, id).Error; err != nil {
@@ -50,6 +53,7 @@ func Update(db *gorm.DB, id int64, rawText string) error {
 	return db.Save(&note).Error
 }
 
+// Delete a markdown note entry from database
 func Delete(db *gorm.DB, id int64) error {
 	deletedNote := MDNoteModel{ID: id}
 	return db.Delete(deletedNote).Error

@@ -21,6 +21,9 @@ func AutoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(&UserModel{}).Error
 }
 
+// Handles user login
+// If the user exists, retrieve and return UserModel fom database
+// If the user does not exist, create a new user in the database and return the UserModel
 func HandleLogin(db *gorm.DB, user *UserModel) (*UserModel, error) {
 	var existingUser UserModel
 	if err := db.Where("google_id = ?", user.GoogleID).First(&existingUser).Error; err != nil {
@@ -35,6 +38,7 @@ func HandleLogin(db *gorm.DB, user *UserModel) (*UserModel, error) {
 	return &existingUser, nil
 }
 
+// Retrieves the UserModel corresponding to the given Google ID
 func GetUserByGoogleID(db *gorm.DB, googleID string) (*UserModel, error) {
 	var user UserModel
 	if err := db.Where("google_id = ?", googleID).First(&user).Error; err != nil {
@@ -43,17 +47,20 @@ func GetUserByGoogleID(db *gorm.DB, googleID string) (*UserModel, error) {
 	return &user, nil
 }
 
+// Creates a new user in the database
 func NewUser(db *gorm.DB, user *UserModel) error {
 	user.CreatedAt = time.Now()
 	user.LastLoggedInAt = time.Now()
 	return db.Create(user).Error
 }
 
+// Update the login time of a user
 func (u *UserModel) updateLoginTime(db *gorm.DB) error {
 	u.LastLoggedInAt = time.Now()
 	return db.Save(u).Error
 }
 
+// Retrieve all MD note entries owned by the given user
 func (u *UserModel) MDNotes(db *gorm.DB) ([]md_note.MDNoteModel, error) {
 	var mdNotes []md_note.MDNoteModel
 	if err := db.Where("owner_id = ?", u.ID).Find(&mdNotes).Error; err != nil {
